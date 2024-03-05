@@ -5,8 +5,9 @@
 
 using namespace std;
 
-const int MAX_SIZE = 100;
+const int MAX_SIZE = 100; // Maximum size of the queue
 
+// Define a structure to hold student information
 struct Student {
     string id;
     string name;
@@ -14,46 +15,49 @@ struct Student {
     float cgpa;
 };
 
+// Define a class to manage the queue of students
 class StudentQueue {
 private:
-    Student students[MAX_SIZE];
-    int front, rear, size;
+    Student students[MAX_SIZE]; // Array of students to serve as the queue
+    int front, rear, size; // Indices for the front and rear of the queue, and the current size
 public:
+    // Constructor initializes the queue properties
     StudentQueue() : front(0), rear(-1), size(0) {}
 
+    // Check if the queue is full
     bool isFull() const {
         return size == MAX_SIZE;
     }
-
+    // Check if the queue is empty
     bool isEmpty() const {
         return size == 0;
     }
 
+    // Add a student to the rear of the queue
     void enqueue(const Student& student) {
         if (isFull()) {
             cout << "Queue is full" << endl;
             return;
         }
-        rear = (rear + 1) % MAX_SIZE;
-        students[rear] = student;
-        size++;
+        rear = (rear + 1) % MAX_SIZE; // Increment rear index circularly
+        students[rear] = student; // Add the student to the queue
+        size++; // Increment the queue size
     }
 
+    // Remove and return a student from the front of the queue
     Student dequeue() {
         if (isEmpty()) {
             cout << "Queue is empty" << endl;
             exit(1); // Exit the program for simplicity
         }
-        Student temp = students[front];
-        front = (front + 1) % MAX_SIZE;
+        Student temp = students[front]; // Store the front student
+        front = (front + 1) % MAX_SIZE; // Increment front index circularly
         size--;
         return temp;
     }
-
-    // This function is no longer needed
-    // void displayStudentsBelowCGPA(float cgpa);
 };
 
+// Read student records from a file and add them to the queue
 void readFromFileAndEnqueue(StudentQueue &queue, const char* filename) {
     ifstream file(filename);
     if (!file.is_open()) {
@@ -62,6 +66,7 @@ void readFromFileAndEnqueue(StudentQueue &queue, const char* filename) {
     }
 
     Student student;
+    // Read student data and enqueue
     while (file >> student.id >> student.name >> student.dob >> student.cgpa) {
         queue.enqueue(student);
     }
@@ -69,6 +74,7 @@ void readFromFileAndEnqueue(StudentQueue &queue, const char* filename) {
     file.close();
 }
 
+// Dequeue students and write their information to a file, also store in a vector for later use
 void dequeueAndWriteToFile(StudentQueue &queue, const char* filename, vector<Student>& tempStorage) {
     ofstream file(filename);
     if (!file.is_open()) {
@@ -76,6 +82,7 @@ void dequeueAndWriteToFile(StudentQueue &queue, const char* filename, vector<Stu
         return;
     }
 
+    // Dequeue students and write to file
     while (!queue.isEmpty()) {
         Student student = queue.dequeue();
         tempStorage.push_back(student); // Store student for later use
@@ -86,6 +93,7 @@ void dequeueAndWriteToFile(StudentQueue &queue, const char* filename, vector<Stu
     file.close();
 }
 
+// Display names of students with CGPA less than a specified value
 void displayStudentsBelowCGPA(const vector<Student>& students, float cgpa) {
     cout << "Names of students with CGPA less than 9:" << endl;
     for (const auto& student : students) {
@@ -96,8 +104,8 @@ void displayStudentsBelowCGPA(const vector<Student>& students, float cgpa) {
 }
 
 int main() {
-    StudentQueue queue;
-    vector<Student> tempStorage;
+    StudentQueue queue; // Create a queue instance
+    vector<Student> tempStorage; // Create a vector to store students after dequeueing
 
     readFromFileAndEnqueue(queue, "studentin.dat");
     dequeueAndWriteToFile(queue, "studentout.dat", tempStorage);
