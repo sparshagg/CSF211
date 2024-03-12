@@ -2,6 +2,7 @@
 #include <string>
 using namespace std;
 
+// Define a Student struct to hold individual student information
 struct Student
 {
     string name;
@@ -9,21 +10,24 @@ struct Student
     double CGPA;
 };
 
+// Define a Node struct to act as the building block for the linked list
 struct Node
 {
-    Student data;
-    Node *next;
+    Student data; // Data of type Student
+    Node *next;   // Pointer to the next node in the list
 };
 
+// Declare the StudentList class to manage the linked list of students
 class StudentList
 {
 private:
-    Node *head;
-    int listSize;
+    Node *head;   // Pointer to the first node in the list
+    int listSize; // Keeps track of the number of nodes in the list
 
 public:
     StudentList() : head(nullptr), listSize(0) {}
 
+    // Destructor deallocates all nodes to prevent memory leaks
     ~StudentList()
     {
         Node *current = head;
@@ -36,6 +40,7 @@ public:
         head = nullptr;
     }
 
+    // insert function adds a new student record at a specified position
     void insert(int position, string name, string ID, double CGPA)
     {
         if (position < 0 || position > listSize)
@@ -44,6 +49,7 @@ public:
             return;
         }
 
+        // Create a new node with the provided student information
         Node *newNode = new Node;  // Allocate new node
         newNode->data.name = name; // Set student name
         newNode->data.ID = ID;     // Set student ID
@@ -79,6 +85,7 @@ public:
         cout << "Added the student record to the list" << endl;
     }
 
+    // find function searches for a student by name and returns its position
     int find(string name)
     {
         Node *temp = head;
@@ -95,11 +102,14 @@ public:
         return -1;
     }
 
+    // deleteRecord function removes a student record from the list by name
     int deleteRecord(string name)
     {
+        // Check if list is empty
         if (head == nullptr)
             return -1;
 
+        // Special case: delete first node
         if (head->data.name == name)
         {
             Node *toDelete = head;
@@ -109,17 +119,19 @@ public:
             return 0;
         }
 
+        // General case: search and delete node
         Node *temp = head;
         while (temp->next != nullptr && temp->next->data.name != name)
         {
             temp = temp->next;
         }
-
+        // If not found, return -1
         if (temp->next == nullptr)
         {
             return -1;
         }
 
+        // Delete the found node
         Node *toDelete = temp->next;
         temp->next = temp->next->next;
         delete toDelete;
@@ -127,6 +139,7 @@ public:
         return 0;
     }
 
+    // display function prints all student records in the list
     void display()
     {
         Node *temp = head;
